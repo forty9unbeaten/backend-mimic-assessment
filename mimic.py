@@ -45,51 +45,50 @@ columns, so the output looks better.
 
 import random
 import sys
+import math
 
-__author__ = "???"
-
-
-def create_mimic_dict(filename):
-    """Returns mimic dict mapping each word to list of words which follow it. 
-    For example:
-        Input: "I am a software developer, and I don't care who knows"
-        Output: 
-            {
-                "" : ["I"],
-                "I" : ["am", "don't"], 
-                "am": ["a"], 
-                "a": ["software"],
-                "software" : ["developer,"],
-                "developer," : ["and"],
-                "and" : ["I"],
-                "I" : ["don't"],
-                "don't" : ["care"],
-                "care" : ["who"],
-                "who" : ["knows"]
-            }
-    """
-    # +++your code here+++
-    
-
-def print_mimic(mimic_dict, start_word):
-    """Given a previously compiled mimic_dict and start_word, prints 200 random words:
-        - Print the start_word
-        - Lookup the start_word in your mimic_dict and get it's next-list
-        - Randomly select a new word from the next-list
-        - Repeat this process 200 times
-    """
-    # +++your code here+++
-    pass
+__author__ = "Rob Spears (GitHub: forty9unbeaten)"
 
 
-# Provided main(), calls mimic_dict() and mimic()
+def createMimicDict(filename):
+    with open(filename, 'r') as f:
+        text = f.read().split()
+        mimicDict = {'': [text[0]]}
+        for i in range(0, len(text) - 1):
+            if text[i] in mimicDict:
+                mimicDict[text[i]].append(text[i + 1])
+            else:
+                mimicDict[text[i]] = [text[i + 1]]
+        return mimicDict
+
+
+def printMimic(mimicDict, startWord):
+    output = []
+    currentLine = ''
+
+    for i in range(0, 200):
+        currentLine += ' ' + startWord
+        startWord = random.choice(mimicDict[startWord])
+        if len(currentLine) in range(70, 80):
+            output.append(currentLine)
+            currentLine = ''
+
+    if len(currentLine):
+        output.append(currentLine)
+
+    for line in output:
+        print(line)
+
+
 def main():
-    if len(sys.argv) != 2:
-        print 'usage: python mimic.py file-to-read'
-        sys.exit(1)
+    # if len(sys.argv) != 2:
+    #     print('usage: python mimic.py file-to-read')
+    #     sys.exit(1)
+    # d = createMimicDict(sys.argv[1])
+    # printMimic(d, '')
 
-    d = create_mimic_dict(sys.argv[1])
-    print_mimic(d, '')
+    d = createMimicDict('alice.txt')
+    printMimic(d, '')
 
 
 if __name__ == '__main__':
